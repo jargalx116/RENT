@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PUBG Account Rental</title>
+    
+    <!-- Font Awesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4facfe;
+            --primary-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            --btn-gradient: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            
+            --text-main: #2d3436;
+            --text-sec: #636e72;
+            
+            --success: #00b894;
+            --danger: #ff7675;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            background-image: url('https://images.unsplash.com/photo-1499346030926-9a72daac6ea6?q=80&w=3270&auto=format&fit=crop');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: -1;
+        }
+
+        /* --- Header & Nav --- */
+        header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 22px;
+            margin: 0;
+            color: #2d3436;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Icon style updated for image logo */
+        h1 img {
+            height: 40px;
+            width: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* --- Filter Scrollable Area --- */
+        .filter-wrapper {
+            margin-top: 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 5px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .filter-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-container {
+            display: inline-flex;
+            gap: 12px;
+        }
+
+        button.filter-btn {
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-sec);
+            border: 1px solid white;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button.filter-btn:hover {
+            transform: translateY(-2px);
+            background: white;
+        }
+
+        button.filter-btn.active {
+            background: var(--btn-gradient);
+            color: white;
+            border: 1px solid transparent;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        /* --- Grid Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .catalog {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        @media (max-width: 480px) {
+            .catalog {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                margin-top: 20px;
+            }
+        }
+
+        /* --- Glass Card Design --- */
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(31, 38, 135, 0.15);
+        }
+
+        /* Image Area (UPDATED NO BLACK BORDER) */
+        .card-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+            cursor: pointer; 
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            transition: transform 0.5s;
+        }
+        
+        .card:hover .card-img {
+            transform: scale(1.02);
+        }
+        
+        .card-img-wrapper:hover::after {
+            content: '\f00e'; 
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255,255,255,0.8);
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        .status-available { 
+            background: rgba(255, 255, 255, 0.9); 
+            color: var(--success);
+            border: 1px solid #e0fbf4;
+        }
+        .status-rented { 
+            background: rgba(255, 255, 255, 0.9); 
+            color: var(--danger);
+            border: 1px solid #feeaea;
+        }
+
+        /* Card Content */
+        .card-body {
+            padding: 24px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .card-id {
+            font-size: 12px;
+            color: var(--text-sec);
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        /* Pricing Grid */
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .price-item {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid white;
+            padding: 12px 5px;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.2s;
+        }
+        
+        .price-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .price-label {
+            display: block;
+            font-size: 10px;
+            color: var(--text-sec);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .price-value {
+            display: block;
+            font-weight: 700;
+            font-size: 14px;
+            color: #0984e3; /* Soft blue for price */
+        }
+
+        /* Action Button */
+        .btn-rent {
+            background: var(--btn-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 15px;
+            margin-top: auto;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-rent:hover {
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-rent:active {
+            transform: scale(0.98);
+        }
+
+        .btn-rent.disabled {
+            background: #dfe6e9;
+            color: #b2bec3;
+            box-shadow: none;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Loading & Error */
+        #loading {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-sec);
+            font-size: 16px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .error-msg {
+            color: var(--danger);
+            background: rgba(255, 118, 117, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        #debug-info {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        /* --- LIGHTBOX (Modal) STYLES --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            padding-top: 50px; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.9); 
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: auto;
+            max-width: 90%;
+            max-height: 85vh;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            animation-name: zoom;
+            animation-duration: 0.3s;
+        }
+
+        @keyframes zoom {
+            from {transform:scale(0)} 
+            to {transform:scale(1)}
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            background: rgba(0,0,0,0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+            background: rgba(255,255,255,0.2);
+        }
+        
+        #caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>
+                <img src="https://i.ibb.co/chSfJZh6/Gemini-Generated-Image-6idkra6idkra6idk.png" alt="Logo">
+                АКК ТҮРЭЭС
+            </h1>
+        </div>
+        
+        <div class="filter-wrapper">
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterData('all')">Бүгд</button>
+                <button class="filter-btn" onclick="filterData('Available')">Сул байгаа</button>
+                <button class="filter-btn" onclick="filterData('Rented')">Хүнтэй</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="loading"><i class="fas fa-spinner fa-spin"></i> Уншиж байна...</div>
+        <div id="catalog" class="catalog"></div>
+        <div id="debug-info"></div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="img01">
+        <div id="caption"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    
+    <script>
+        // ==========================================
+        // ТОХИРГООНЫ ХЭСЭГ
+        // ==========================================
+        
+        // 1. Google Sheet-ийн CSV линкээ энд тавина уу:
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRlyUbnabRR5w5zK2RNfQhTPVV1o4zo9dHLtFrFx-lwcvGJw1yHtPsbepQNVOFCcBKkrPzFcHLl0vMz/pub?gid=0&single=true&output=csv'; 
+        
+        // 2. Messenger ЛИНК-ээ энд тавина уу (Ж нь: https://m.me/YourPageID эсвэл https://www.facebook.com/messages/t/12345):
+        const MESSENGER_LINK = 'https://www.facebook.com/jargalsaikhan.official'; 
+
+        // ==========================================
+
+        const catalog = document.getElementById('catalog');
+        const loading = document.getElementById('loading');
+        const debugInfo = document.getElementById('debug-info');
+        let allData = [];
+
+        function fetchData() {
+            if(SHEET_URL.includes('TA_LINKEE')) {
+                loading.innerHTML = '<div class="error-msg">Тохиргооны хэсэгт Google Sheet линкээ хийнэ үү!</div>';
+                return;
+            }
+
+            const cacheBuster = SHEET_URL + '&t=' + new Date().getTime();
+
+            Papa.parse(cacheBuster, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    allData = results.data;
+                    console.log("Татагдсан мэдээлэл:", allData); // Debugging
+                    renderCards(allData);
+                    loading.style.display = 'none';
+                    
+                    if(allData.length > 0) {
+                        debugInfo.innerText = `Нийт ${allData.length} аккаунт амжилттай уншигдлаа.`;
+                    } else {
+                        debugInfo.innerText = "Мэдээлэл олдсонгүй.";
+                    }
+                },
+                error: function(err) {
+                    loading.innerHTML = '<div class="error-msg">Мэдээлэл татахад алдаа гарлаа.</div>';
+                    console.error(err);
+                }
+            });
+        }
+
+        // Helper to find keys case-insensitively
+        function getValue(item, possibleKeys) {
+            const keys = Object.keys(item);
+            for (let pk of possibleKeys) {
+                const foundKey = keys.find(k => k.trim().toLowerCase() === pk.toLowerCase());
+                if (foundKey) return item[foundKey];
+            }
+            return null;
+        }
+
+        // Үнэ форматлах функц (3 оронгоор таслах + ₮)
+        function formatPrice(priceStr) {
+            if (!priceStr) return '-';
+            // Зөвхөн тоонуудыг ялгаж авах
+            const cleanNum = priceStr.toString().replace(/[^0-9]/g, '');
+            if (!cleanNum) return priceStr; // Тоо байхгүй бол байгаагаар нь буцаана
+            
+            // 3 оронгоор таслал тавих
+            const formatted = new Intl.NumberFormat().format(cleanNum);
+            return `${formatted}₮`;
+        }
+
+        function renderCards(data) {
+            catalog.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const id = getValue(item, ['ID', 'id']);
+                const name = getValue(item, ['Name', 'name', 'Ner']);
+                
+                if (!id && !name) return;
+
+                const statusRaw = getValue(item, ['Status', 'status', 'tuluv']);
+                const statusVal = statusRaw ? statusRaw.toLowerCase().trim() : '';
+                const isAvailable = statusVal === 'available' || statusVal === 'active' || statusVal === 'sul' || statusVal === 'active';
+                
+                const statusClass = isAvailable ? 'status-available' : 'status-rented';
+                const statusText = isAvailable ? 'Сул' : 'Хүнтэй';
+                
+                let imgSrc = getValue(item, ['Image', 'image', 'Zurag', 'Img']);
+                if (imgSrc) imgSrc = imgSrc.trim();
+                
+                const displayImg = (imgSrc && imgSrc.startsWith('http')) 
+                    ? imgSrc 
+                    : 'https://via.placeholder.com/400x225/e0e0e0/555?text=Link+Error';
+
+                // Үнийг уншиж форматлах
+                const p1Raw = getValue(item, ['Price_1H', 'price_1h']);
+                const p12Raw = getValue(item, ['Price_12H', 'price_12h']);
+                const p24Raw = getValue(item, ['Price_24H', 'price_24h']);
+
+                const p1 = formatPrice(p1Raw);
+                const p12 = formatPrice(p12Raw);
+                const p24 = formatPrice(p24Raw);
+
+                // Messenger Link Logic
+                const msgText = `Сайн байна уу, би ID: ${id} - "${name}" аккаунтыг түрээслэх хүсэлтэй байна.`;
+                
+                // Хэрэглэгч MESSENGER_LINK дээр бүтэн линк тавьсан гэж үзнэ
+                let finalLink = '#';
+                if (isAvailable && MESSENGER_LINK && MESSENGER_LINK.startsWith('http')) {
+                    // Хэрэв линк ? тэмдэгттэй бол & залгана, үгүй бол ? залгана
+                    const separator = MESSENGER_LINK.includes('?') ? '&' : '?';
+                    finalLink = `${MESSENGER_LINK}${separator}text=${encodeURIComponent(msgText)}`;
+                }
+
+                const cardHTML = `
+                    <div class="card">
+                        <div class="card-img-wrapper" onclick="openModal('${displayImg}', '${name}')">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            <img src="${displayImg}" alt="${name}" class="card-img" 
+                                onerror="this.onerror=null; this.src='https://via.placeholder.com/400x225/000000/fff?text=Image+Load+Error';">
+                        </div>
+                        
+                        <div class="card-body">
+                            <span class="card-id">ID: ${id}</span>
+                            <h3 class="card-title">${name}</h3>
+                            
+                            <div class="price-grid">
+                                <div class="price-item">
+                                    <span class="price-label">1 Цаг</span>
+                                    <span class="price-value">${p1}</span>
+                                </div>
+                                <div class="price-item">
+                                    <span class="price-label">12 Цаг</span>
+                                    <span class="price-value">${p12}</span>
+                                </div>
+                                <div class="price-item">
+                                    <span class="price-label">24 Цаг</span>
+                                    <span class="price-value">${p24}</span>
+                                </div>
+                            </div>
+
+                            <a href="${finalLink}" class="btn-rent ${!isAvailable ? 'disabled' : ''}" target="_blank">
+                                ${isAvailable ? '<i class="fab fa-facebook-messenger"></i> Түрээслэх' : '<i class="fas fa-lock"></i> Түрээслэгдсэн'}
+                            </a>
+                        </div>
+                    </div>
+                `;
+                catalog.innerHTML += cardHTML;
+            });
+
+            if (data.length === 0) {
+                catalog.innerHTML = '<p style="text-align:center; color:#555; width:100%; padding: 20px;">Одоогоор аккаунт байхгүй байна.</p>';
+            }
+        }
+
+        function filterData(status) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (status === 'all') {
+                renderCards(allData);
+            } else if (status === 'Available') {
+                const filtered = allData.filter(item => {
+                    const statusRaw = getValue(item, ['Status', 'status', 'tuluv']);
+                    const s = statusRaw ? statusRaw.toLowerCase().trim() : '';
+                    return s === 'available' || s === 'active' || s === 'sul';
+                });
+                renderCards(filtered);
+            } else {
+                const filtered = allData.filter(item => {
+                    const statusRaw = getValue(item, ['Status', 'status', 'tuluv']);
+                    const s = statusRaw ? statusRaw.toLowerCase().trim() : '';
+                    return s !== 'available' && s !== 'active' && s !== 'sul';
+                });
+                renderCards(filtered);
+            }
+        }
+
+        // --- LIGHTBOX LOGIC ---
+        function openModal(src, altText) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("img01");
+            const captionText = document.getElementById("caption");
+            
+            modal.style.display = "block";
+            modalImg.src = src;
+            if(altText) captionText.innerHTML = altText;
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
