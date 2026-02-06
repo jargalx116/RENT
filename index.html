@@ -95,6 +95,24 @@
             border: 2px solid white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        
+        /* --- Description Section --- */
+        .info-section {
+            max-width: 1200px;
+            margin: 20px auto 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 15px;
+            border: 1px solid white;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+        
+        .info-section h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
 
         /* --- Filter Scrollable Area --- */
         .filter-wrapper {
@@ -145,7 +163,7 @@
         /* --- Grid Layout --- */
         .container {
             max-width: 1200px;
-            margin: 30px auto;
+            margin: 20px auto;
             padding: 0 15px;
         }
 
@@ -160,7 +178,7 @@
                 grid-template-columns: 1fr;
             }
             .container {
-                margin-top: 20px;
+                margin-top: 10px;
             }
         }
 
@@ -373,28 +391,25 @@
             display: none; 
             position: fixed; 
             z-index: 2000; 
-            /* padding-top: 50px; Хассан - Дээд талаас зай авах хэрэггүй */
             left: 0;
             top: 0;
             width: 100%; 
             height: 100%; 
-            overflow: hidden; /* Scroll хийгдэхгүй болгосон */
+            overflow: hidden; 
             background-color: rgb(0,0,0); 
             background-color: rgba(0,0,0,0.9); 
             backdrop-filter: blur(5px);
-            
-            /* Яг голлуулах тохиргоо (Flexbox) */
             align-items: center;
             justify-content: center;
             flex-direction: column;
         }
 
         .modal-content {
-            margin: 0; /* Auto margin хэрэггүй болсон */
+            margin: 0; 
             display: block;
             width: auto;
-            max-width: 95%; /* Утсан дээр арай том харагдуулна */
-            max-height: 80vh; /* Өндрийг хязгаарлаж дэлгэцэнд багтаана */
+            max-width: 95%; 
+            max-height: 80vh; 
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(255,255,255,0.1);
             animation-name: zoom;
@@ -409,7 +424,7 @@
 
         .close {
             position: absolute;
-            top: 20px; /* Утсан дээр дарахад амар болгож доошлуулсан */
+            top: 20px; 
             right: 20px;
             color: #f1f1f1;
             font-size: 40px;
@@ -423,7 +438,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 2001; /* Зургийн дээр гаргах */
+            z-index: 2001; 
         }
 
         .close:hover,
@@ -442,7 +457,6 @@
             text-align: center;
             color: #ccc;
             padding: 10px 0;
-            /* height: 150px; Хассан - Зай эзлэхгүй болгох */
         }
 
     </style>
@@ -465,6 +479,12 @@
             </div>
         </div>
     </header>
+    
+    <!-- ТАЙЛБАР ХЭСЭГ (Description Section) -->
+    <div class="info-section">
+        <h3>Санамж</h3>
+        <p>Та түрээслэх аккаунтаа сонгоод "Түрээслэх" товчийг дарна уу. Төлбөр төлсний дараа нэвтрэх эрх илгээгдэнэ.</p>
+    </div>
 
     <div class="container">
         <div id="loading"><i class="fas fa-spinner fa-spin"></i> Уншиж байна...</div>
@@ -488,7 +508,7 @@
         // 1. Google Sheet-ийн CSV линкээ энд тавина уу:
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRlyUbnabRR5w5zK2RNfQhTPVV1o4zo9dHLtFrFx-lwcvGJw1yHtPsbepQNVOFCcBKkrPzFcHLl0vMz/pub?gid=0&single=true&output=csv'; 
         
-        // 2. Messenger ЛИНК-ээ энд тавина уу (Ж нь: https://m.me/YourPageID эсвэл https://www.facebook.com/messages/t/12345):
+        // 2. Үндсэн Page-ийн ЛИНК:
         const MESSENGER_LINK = 'https://www.facebook.com/jargalsaikhan.official'; 
 
         // ==========================================
@@ -553,13 +573,34 @@
                 
                 if (!id && !name) return;
 
+                // --- STATUS LOGIC ---
                 const statusRaw = getValue(item, ['Status', 'status', 'tuluv']);
                 const statusVal = statusRaw ? statusRaw.toLowerCase().trim() : '';
-                const isAvailable = statusVal === 'available' || statusVal === 'active' || statusVal === 'sul' || statusVal === 'active';
                 
-                const statusClass = isAvailable ? 'status-available' : 'status-rented';
-                const statusText = isAvailable ? 'Сул' : 'Хүнтэй';
+                let isAvailable = true; // Default
+                let showBadge = false; // Badge харуулах эсэх
+                let statusClass = '';
+                let statusText = '';
+
+                if (!statusVal) {
+                    // Хоосон байвал -> Идэвхтэй гэхдээ Badge гаргахгүй
+                    isAvailable = true;
+                    showBadge = false;
+                } else if (['available', 'active', 'sul'].includes(statusVal)) {
+                    // Available гэж бичсэн бол -> Идэвхтэй, СУЛ badge гарна
+                    isAvailable = true;
+                    showBadge = true;
+                    statusClass = 'status-available';
+                    statusText = 'Сул';
+                } else {
+                    // Бусад (Rented г.м) -> Идэвхгүй, ХҮНТЭЙ badge гарна
+                    isAvailable = false;
+                    showBadge = true;
+                    statusClass = 'status-rented';
+                    statusText = 'Хүнтэй';
+                }
                 
+                // --- IMAGE LOGIC ---
                 let imgSrc = getValue(item, ['Image', 'image', 'Zurag', 'Img']);
                 if (imgSrc) imgSrc = imgSrc.trim();
                 
@@ -567,7 +608,7 @@
                     ? imgSrc 
                     : 'https://via.placeholder.com/400x225/e0e0e0/555?text=Link+Error';
 
-                // Үнийг уншиж форматлах
+                // --- PRICES ---
                 const p1Raw = getValue(item, ['Price_1H', 'price_1h']);
                 const p12Raw = getValue(item, ['Price_12H', 'price_12h']);
                 const p24Raw = getValue(item, ['Price_24H', 'price_24h']);
@@ -576,21 +617,29 @@
                 const p12 = formatPrice(p12Raw);
                 const p24 = formatPrice(p24Raw);
 
-                // Messenger Link Logic
+                // --- LINK LOGIC (FB Column or Global) ---
                 const msgText = `Сайн байна уу, би ID: ${id} - "${name}" аккаунтыг түрээслэх хүсэлтэй байна.`;
                 
-                // Хэрэглэгч MESSENGER_LINK дээр бүтэн линк тавьсан гэж үзнэ
+                // Эхлээд тухайн аккаунтын эзний линкийг хайна (FB, OwnerLink гэх мэт)
+                const ownerLink = getValue(item, ['FB', 'fb', 'OwnerLink', 'Facebook']);
+                
                 let finalLink = '#';
-                if (isAvailable && MESSENGER_LINK && MESSENGER_LINK.startsWith('http')) {
-                    // Хэрэв линк ? тэмдэгттэй бол & залгана, үгүй бол ? залгана
-                    const separator = MESSENGER_LINK.includes('?') ? '&' : '?';
-                    finalLink = `${MESSENGER_LINK}${separator}text=${encodeURIComponent(msgText)}`;
+                
+                if (isAvailable) {
+                    if (ownerLink && ownerLink.startsWith('http')) {
+                        // Хэрэв Sheet дээр FB линк байвал түүнийг ашиглана
+                        finalLink = ownerLink;
+                    } else if (MESSENGER_LINK && MESSENGER_LINK.startsWith('http')) {
+                        // Байхгүй бол үндсэн Page линкийг ашиглана
+                        const separator = MESSENGER_LINK.includes('?') ? '&' : '?';
+                        finalLink = `${MESSENGER_LINK}${separator}text=${encodeURIComponent(msgText)}`;
+                    }
                 }
 
                 const cardHTML = `
                     <div class="card">
                         <div class="card-img-wrapper" onclick="openModal('${displayImg}', '${name}')">
-                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            ${showBadge ? `<span class="status-badge ${statusClass}">${statusText}</span>` : ''}
                             <img src="${displayImg}" alt="${name}" class="card-img" 
                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x225/000000/fff?text=Image+Load+Error';">
                         </div>
@@ -635,17 +684,19 @@
             if (status === 'all') {
                 renderCards(allData);
             } else if (status === 'Available') {
+                // Хоосон эсвэл active/sul байвал харуулна
                 const filtered = allData.filter(item => {
                     const statusRaw = getValue(item, ['Status', 'status', 'tuluv']);
                     const s = statusRaw ? statusRaw.toLowerCase().trim() : '';
-                    return s === 'available' || s === 'active' || s === 'sul';
+                    return !s || s === 'available' || s === 'active' || s === 'sul';
                 });
                 renderCards(filtered);
             } else {
+                // Rented
                 const filtered = allData.filter(item => {
                     const statusRaw = getValue(item, ['Status', 'status', 'tuluv']);
                     const s = statusRaw ? statusRaw.toLowerCase().trim() : '';
-                    return s !== 'available' && s !== 'active' && s !== 'sul';
+                    return s && s !== 'available' && s !== 'active' && s !== 'sul';
                 });
                 renderCards(filtered);
             }
@@ -657,7 +708,7 @@
             const modalImg = document.getElementById("img01");
             const captionText = document.getElementById("caption");
             
-            modal.style.display = "flex"; /* Block биш Flex болгож өөрчилсөн */
+            modal.style.display = "flex"; 
             modalImg.src = src;
             if(altText) captionText.innerHTML = altText;
         }
